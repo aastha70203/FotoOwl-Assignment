@@ -1,6 +1,6 @@
 # 📱 FotoOwl Pins — Scalable React Native Media Stream Application
 
-![FotoOwl Logo](https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=1200&q=80)
+
 
 Built for the **FotoOwl.ai React Native Mobile Engineer Intern Assignment**.  
 `FotoOwl Pins` is a production-grade React Native mobile application built with TypeScript, Zustand state management, React Navigation 7, AsyncStorage local persistence, Jest automated testing, and a signature **Pinterest-Inspired Staggered Masonry UI/UX**.
@@ -170,10 +170,4 @@ fotoowl-gallery-app/
 └── tsconfig.json             # TypeScript compiler settings
 ```
 
----
 
-## 🏆 Assessment Score & Status
-
-- **Candidate Score**: **98 / 100** (Grade: **EXCELLENT**)
-- **Unit Test Status**: **15 / 15 Tests Passing**
-- **Repository**: [https://github.com/aastha70203/FotoOwl-Assignment](https://github.com/aastha70203/FotoOwl-Assignment)
