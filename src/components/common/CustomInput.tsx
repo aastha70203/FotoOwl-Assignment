@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   View,
   Text,
   TextInput,
   TouchableOpacity,
+  Pressable,
   StyleSheet,
   TextInputProps,
+  Platform,
 } from 'react-native';
 import { Eye, EyeOff } from 'lucide-react-native';
 import { useThemeStore } from '../../store/useThemeStore';
@@ -28,15 +30,24 @@ export const CustomInput: React.FC<CustomInputProps> = ({
   const { theme } = useThemeStore();
   const [isFocused, setIsFocused] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const inputRef = useRef<TextInput>(null);
+
+  const handleContainerPress = () => {
+    inputRef.current?.focus();
+  };
 
   return (
     <View style={styles.wrapper}>
       {label && (
-        <Text style={[styles.label, { color: theme.textSecondary }]}>
+        <Text
+          onPress={handleContainerPress}
+          style={[styles.label, { color: theme.textSecondary }]}
+        >
           {label}
         </Text>
       )}
-      <View
+      <Pressable
+        onPress={handleContainerPress}
         style={[
           styles.inputContainer,
           {
@@ -50,9 +61,14 @@ export const CustomInput: React.FC<CustomInputProps> = ({
           isFocused && { shadowColor: theme.primary, elevation: 3 },
         ]}
       >
-        {leftIcon && <View style={styles.iconLeft}>{leftIcon}</View>}
+        {leftIcon && (
+          <View style={styles.iconLeft} pointerEvents="none">
+            {leftIcon}
+          </View>
+        )}
 
         <TextInput
+          ref={inputRef}
           placeholderTextColor={theme.textMuted}
           secureTextEntry={isPassword && !showPassword}
           onFocus={() => setIsFocused(true)}
@@ -60,7 +76,8 @@ export const CustomInput: React.FC<CustomInputProps> = ({
           style={[
             styles.input,
             { color: theme.textPrimary },
-            leftIcon ? { paddingLeft: 8 } : null,
+            Platform.OS === 'web' ? ({ outlineStyle: 'none' } as any) : null,
+            leftIcon ? { paddingLeft: 6 } : null,
             style,
           ]}
           {...props}
@@ -79,7 +96,7 @@ export const CustomInput: React.FC<CustomInputProps> = ({
             )}
           </TouchableOpacity>
         )}
-      </View>
+      </Pressable>
 
       {error ? (
         <Text style={[styles.errorText, { color: theme.error }]}>
@@ -100,6 +117,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginBottom: 6,
     letterSpacing: 0.2,
+    cursor: 'pointer',
   },
   inputContainer: {
     flexDirection: 'row',
@@ -108,11 +126,13 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     paddingHorizontal: 14,
     minHeight: 50,
+    cursor: 'text',
   },
   input: {
     flex: 1,
     fontSize: 15,
     paddingVertical: 10,
+    height: '100%',
   },
   iconLeft: {
     marginRight: 6,

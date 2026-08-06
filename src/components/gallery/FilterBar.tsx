@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import {
   View,
   Text,
   TextInput,
   TouchableOpacity,
+  Pressable,
   ScrollView,
   StyleSheet,
+  Platform,
 } from 'react-native';
 import { Search, X, ArrowUpDown, Sparkles } from 'lucide-react-native';
 import { useThemeStore } from '../../store/useThemeStore';
@@ -22,6 +24,7 @@ export const FilterBar: React.FC = () => {
     sortOrder,
     setSortOrder,
   } = useGalleryStore();
+  const inputRef = useRef<TextInput>(null);
 
   const categories: { label: string; value: FilterCategory; icon?: boolean }[] = [
     { label: 'All Pins', value: 'ALL' },
@@ -51,7 +54,8 @@ export const FilterBar: React.FC = () => {
     <View style={styles.container}>
       {/* Pinterest Pill Search Bar */}
       <View style={styles.searchRow}>
-        <View
+        <Pressable
+          onPress={() => inputRef.current?.focus()}
           style={[
             styles.searchBox,
             { backgroundColor: theme.surface, borderColor: 'transparent' },
@@ -59,18 +63,23 @@ export const FilterBar: React.FC = () => {
         >
           <Search size={20} color={theme.textMuted} />
           <TextInput
+            ref={inputRef}
             placeholder="Search for event pins, creators, ideas..."
             placeholderTextColor={theme.textMuted}
             value={searchQuery}
             onChangeText={setSearchQuery}
-            style={[styles.searchInput, { color: theme.textPrimary }]}
+            style={[
+              styles.searchInput,
+              { color: theme.textPrimary },
+              Platform.OS === 'web' ? ({ outlineStyle: 'none' } as any) : null,
+            ]}
           />
           {searchQuery.length > 0 && (
             <TouchableOpacity onPress={() => setSearchQuery('')}>
               <X size={18} color={theme.textMuted} />
             </TouchableOpacity>
           )}
-        </View>
+        </Pressable>
 
         {/* Sort Filter Icon Button */}
         <TouchableOpacity
@@ -150,6 +159,7 @@ const styles = StyleSheet.create({
     height: 48,
     borderRadius: 24,
     paddingHorizontal: 16,
+    cursor: 'text',
   },
   searchInput: {
     flex: 1,
