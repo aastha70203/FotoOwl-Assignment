@@ -6,17 +6,26 @@
   "build": {
     "development": {
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "env": {
+        "EXPO_ROUTER_DISABLE_RN_NAVIGATION_CHECK": "1"
+      }
     },
     "preview": {
       "distribution": "internal",
       "credentialsSource": "remote",
+      "env": {
+        "EXPO_ROUTER_DISABLE_RN_NAVIGATION_CHECK": "1"
+      },
       "android": {
         "buildType": "apk"
       }
     },
     "production": {
       "credentialsSource": "remote",
+      "env": {
+        "EXPO_ROUTER_DISABLE_RN_NAVIGATION_CHECK": "1"
+      },
       "android": {
         "buildType": "app-bundle"
       }
