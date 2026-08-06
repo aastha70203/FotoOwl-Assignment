@@ -1,41 +1,57 @@
-import React, { useEffect } from 'react';
-import { View, ActivityIndicator, StyleSheet } from 'react-native';
+import React from 'react';
+import { View, StyleSheet, Platform } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Image, Heart, User } from 'lucide-react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { LayoutGrid, Heart, User } from 'lucide-react-native';
 
-import { useAuthStore } from '../store/useAuthStore';
-import { useThemeStore } from '../store/useThemeStore';
-import { RegisterScreen } from '../screens/auth/RegisterScreen';
 import { LoginScreen } from '../screens/auth/LoginScreen';
+import { RegisterScreen } from '../screens/auth/RegisterScreen';
 import { HomeScreen } from '../screens/main/HomeScreen';
 import { FavoritesScreen } from '../screens/main/FavoritesScreen';
 import { ProfileScreen } from '../screens/main/ProfileScreen';
 import { ImageDetailScreen } from '../screens/main/ImageDetailScreen';
+
+import { useAuthStore } from '../store/useAuthStore';
+import { useThemeStore } from '../store/useThemeStore';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 const MainTabNavigator = () => {
   const { theme } = useThemeStore();
+  const insets = useSafeAreaInsets();
+
+  const bottomPadding = Platform.OS === 'android'
+    ? Math.max(insets.bottom, 10)
+    : Math.max(insets.bottom, 8);
+
+  const tabHeight = 60 + bottomPadding;
 
   return (
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
+        tabBarActiveTintColor: '#E60023',
+        tabBarInactiveTintColor: theme.textMuted,
         tabBarStyle: {
           backgroundColor: theme.cardBg,
           borderTopColor: theme.cardBorder,
-          height: 62,
-          paddingBottom: 8,
+          borderTopWidth: 1,
+          height: tabHeight,
+          paddingBottom: bottomPadding,
           paddingTop: 8,
+          elevation: 12,
+          shadowColor: '#000000',
+          shadowOffset: { width: 0, height: -3 },
+          shadowOpacity: 0.1,
+          shadowRadius: 6,
         },
-        tabBarActiveTintColor: theme.primary,
-        tabBarInactiveTintColor: theme.textMuted,
         tabBarLabelStyle: {
           fontSize: 11,
           fontWeight: '700',
+          marginTop: 2,
         },
       }}
     >
@@ -43,16 +59,20 @@ const MainTabNavigator = () => {
         name="Home"
         component={HomeScreen}
         options={{
-          tabBarLabel: 'Gallery',
-          tabBarIcon: ({ color, size }) => <Image size={size} color={color} />,
+          tabBarLabel: 'Pins',
+          tabBarIcon: ({ color, size }) => (
+            <LayoutGrid size={size - 2} color={color} />
+          ),
         }}
       />
       <Tab.Screen
         name="Favorites"
         component={FavoritesScreen}
         options={{
-          tabBarLabel: 'Favorites',
-          tabBarIcon: ({ color, size }) => <Heart size={size} color={color} />,
+          tabBarLabel: 'Saved',
+          tabBarIcon: ({ color, size }) => (
+            <Heart size={size - 2} color={color} />
+          ),
         }}
       />
       <Tab.Screen
@@ -60,53 +80,50 @@ const MainTabNavigator = () => {
         component={ProfileScreen}
         options={{
           tabBarLabel: 'Profile',
-          tabBarIcon: ({ color, size }) => <User size={size} color={color} />,
+          tabBarIcon: ({ color, size }) => (
+            <User size={size - 2} color={color} />
+          ),
         }}
       />
     </Tab.Navigator>
   );
 };
 
-export const AppNavigator = () => {
-  const { isAuthenticated, isLoading, initializeSession } = useAuthStore();
-  const { initializeTheme, theme } = useThemeStore();
-
-  useEffect(() => {
-    initializeTheme();
-    initializeSession();
-  }, []);
-
-  if (isLoading) {
-    return (
-      <View style={[styles.loadingContainer, { backgroundColor: theme.background }]}>
-        <ActivityIndicator size="large" color={theme.primary} />
-      </View>
-    );
-  }
+export const AppNavigator: React.FC = () => {
+  const { isAuthenticated } = useAuthStore();
+  const { theme } = useThemeStore();
 
   return (
-    <NavigationContainer>
+    <NavigationContainer
+      theme={{
+        dark: theme.isDark,
+        colors: {
+          primary: '#E60023',
+          background: theme.background,
+          card: theme.cardBg,
+          text: theme.textPrimary,
+          border: theme.cardBorder,
+          notification: '#E60023',
+        },
+      }}
+    >
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {!isAuthenticated ? (
           <>
-            <Stack.Screen name="Register" component={RegisterScreen} />
             <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="Register" component={RegisterScreen} />
           </>
         ) : (
           <>
             <Stack.Screen name="MainTabs" component={MainTabNavigator} />
-            <Stack.Screen name="ImageDetail" component={ImageDetailScreen} />
+            <Stack.Screen
+              name="ImageDetail"
+              component={ImageDetailScreen}
+              options={{ animation: 'slide_from_right' }}
+            />
           </>
         )}
       </Stack.Navigator>
     </NavigationContainer>
   );
 };
-
-const styles = StyleSheet.create({
-  loadingContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

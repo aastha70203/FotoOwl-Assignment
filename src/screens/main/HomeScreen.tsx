@@ -7,7 +7,9 @@ import {
   RefreshControl,
   StyleSheet,
   TouchableOpacity,
+  Platform,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { RefreshCw, AlertCircle, Plus } from 'lucide-react-native';
 import { useGalleryStore } from '../../store/useGalleryStore';
 import { useAuthStore } from '../../store/useAuthStore';
@@ -28,6 +30,7 @@ interface HomeScreenProps {
 export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   const { theme } = useThemeStore();
   const { user } = useAuthStore();
+  const insets = useSafeAreaInsets();
   const {
     images,
     isLoading,
@@ -71,6 +74,10 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
     </View>
   );
 
+  const bottomInset = Math.max(insets.bottom, 16);
+  const listBottomPadding = bottomInset + 100;
+  const fabBottomPosition = bottomInset + 75;
+
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       {/* Pinterest Brand Header */}
@@ -105,7 +112,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
           keyExtractor={(item) => item.id}
           numColumns={2}
           columnWrapperStyle={styles.columnWrapper}
-          contentContainerStyle={styles.listPadding}
+          contentContainerStyle={[styles.listPadding, { paddingBottom: listBottomPadding }]}
           showsVerticalScrollIndicator={false}
           renderItem={({ item }) => (
             <ImageCard image={item} onPress={() => handleCardPress(item)} />
@@ -149,7 +156,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
       <TouchableOpacity
         activeOpacity={0.85}
         onPress={() => setIsUploadModalOpen(true)}
-        style={styles.pinterestFab}
+        style={[styles.pinterestFab, { bottom: fabBottomPosition }]}
       >
         <Plus size={24} color="#FFFFFF" />
         <Text style={styles.fabText}>Create Pin</Text>
@@ -188,7 +195,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   listPadding: {
-    paddingBottom: 90,
+    paddingBottom: 110,
   },
   errorContainer: {
     padding: 30,
@@ -226,7 +233,6 @@ const styles = StyleSheet.create({
   },
   pinterestFab: {
     position: 'absolute',
-    bottom: 24,
     right: 20,
     flexDirection: 'row',
     alignItems: 'center',

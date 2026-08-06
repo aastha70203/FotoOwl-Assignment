@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image as RNImage } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Platform, StatusBar } from 'react-native';
 import { Moon, Sun, ArrowLeft } from 'lucide-react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useThemeStore } from '../../store/useThemeStore';
 import { useAuthStore } from '../../store/useAuthStore';
 import { Image } from 'expo-image';
@@ -22,9 +23,22 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   const { theme, toggleTheme, isDarkMode } = useThemeStore();
   const { user } = useAuthStore();
+  const insets = useSafeAreaInsets();
+
+  const paddingTop = Platform.OS === 'android'
+    ? (StatusBar.currentHeight || 24) + 8
+    : Math.max(insets.top, 16) + 4;
 
   return (
-    <View style={[styles.headerContainer, { backgroundColor: theme.background }]}>
+    <View
+      style={[
+        styles.headerContainer,
+        {
+          backgroundColor: theme.background,
+          paddingTop,
+        },
+      ]}
+    >
       <View style={styles.leftSection}>
         {showBack ? (
           <TouchableOpacity
@@ -89,7 +103,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
-    paddingTop: 12,
     paddingBottom: 10,
   },
   leftSection: {
