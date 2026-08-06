@@ -178,6 +178,7 @@ const styles = StyleSheet.create({
   chipsContainer: {
     flexDirection: 'row',
     gap: 10,
+    paddingRight: 16,
     paddingBottom: 2,
   },
   chip: {

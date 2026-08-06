@@ -25,9 +25,12 @@ export const Header: React.FC<HeaderProps> = ({
   const { user } = useAuthStore();
   const insets = useSafeAreaInsets();
 
-  const paddingTop = Platform.OS === 'android'
-    ? (StatusBar.currentHeight || 24) + 8
-    : Math.max(insets.top, 16) + 4;
+  const topInset = Math.max(
+    insets.top,
+    StatusBar.currentHeight || 0,
+    Platform.OS === 'android' ? 36 : 20
+  );
+  const paddingTop = topInset + 10;
 
   return (
     <View
@@ -103,7 +106,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
-    paddingBottom: 10,
+    paddingBottom: 12,
   },
   leftSection: {
     flexDirection: 'row',

@@ -74,9 +74,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
     </View>
   );
 
-  const bottomInset = Math.max(insets.bottom, 16);
-  const listBottomPadding = bottomInset + 100;
-  const fabBottomPosition = bottomInset + 75;
+  const bottomInset = Math.max(insets.bottom, 20);
+  const listBottomPadding = bottomInset + 110;
+  const fabBottomPosition = bottomInset + 80;
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
@@ -195,7 +195,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   listPadding: {
-    paddingBottom: 110,
+    paddingBottom: 120,
   },
   errorContainer: {
     padding: 30,

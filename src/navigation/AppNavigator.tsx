@@ -24,10 +24,10 @@ const MainTabNavigator = () => {
   const insets = useSafeAreaInsets();
 
   const bottomPadding = Platform.OS === 'android'
-    ? Math.max(insets.bottom, 10)
-    : Math.max(insets.bottom, 8);
+    ? Math.max(insets.bottom, 16)
+    : Math.max(insets.bottom, 12);
 
-  const tabHeight = 60 + bottomPadding;
+  const tabHeight = 64 + bottomPadding;
 
   return (
     <Tab.Navigator
@@ -42,11 +42,11 @@ const MainTabNavigator = () => {
           height: tabHeight,
           paddingBottom: bottomPadding,
           paddingTop: 8,
-          elevation: 12,
+          elevation: 16,
           shadowColor: '#000000',
-          shadowOffset: { width: 0, height: -3 },
-          shadowOpacity: 0.1,
-          shadowRadius: 6,
+          shadowOffset: { width: 0, height: -4 },
+          shadowOpacity: 0.15,
+          shadowRadius: 8,
         },
         tabBarLabelStyle: {
           fontSize: 11,
