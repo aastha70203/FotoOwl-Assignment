@@ -6,13 +6,27 @@ const COMMUNITY_UPLOADS_KEY = '@fotoowl_collective_uploaded_photos_v1';
 
 export const storageService = {
   /**
+   * Safe JSON parser wrapper to prevent RedBox syntax error crashes
+   */
+  safeJsonParse<T>(jsonStr: string | null, fallback: T): T {
+    if (!jsonStr || jsonStr === 'undefined' || jsonStr === 'null') {
+      return fallback;
+    }
+    try {
+      return JSON.parse(jsonStr) as T;
+    } catch (e) {
+      console.warn('Safe JSON parse error, returning fallback:', e);
+      return fallback;
+    }
+  },
+
+  /**
    * Get all registered users from storage
    */
   async getRegisteredUsers(): Promise<UserProfile[]> {
     try {
       const jsonStr = await AsyncStorage.getItem(STORAGE_KEYS.REGISTERED_USERS);
-      if (!jsonStr) return [];
-      return JSON.parse(jsonStr) as UserProfile[];
+      return this.safeJsonParse<UserProfile[]>(jsonStr, []);
     } catch (error) {
       console.error('Error reading registered users from storage:', error);
       return [];
@@ -41,8 +55,7 @@ export const storageService = {
   async getActiveSession(): Promise<AuthSession | null> {
     try {
       const jsonStr = await AsyncStorage.getItem(STORAGE_KEYS.ACTIVE_SESSION);
-      if (!jsonStr) return null;
-      return JSON.parse(jsonStr) as AuthSession;
+      return this.safeJsonParse<AuthSession | null>(jsonStr, null);
     } catch (error) {
       console.error('Error reading active session from storage:', error);
       return null;
@@ -81,8 +94,7 @@ export const storageService = {
   async getFavorites(): Promise<string[]> {
     try {
       const jsonStr = await AsyncStorage.getItem(STORAGE_KEYS.FAVORITES);
-      if (!jsonStr) return [];
-      return JSON.parse(jsonStr) as string[];
+      return this.safeJsonParse<string[]>(jsonStr, []);
     } catch (error) {
       console.error('Error reading favorites:', error);
       return [];
@@ -108,8 +120,7 @@ export const storageService = {
   async getUploadedPhotos(): Promise<PicsumImage[]> {
     try {
       const jsonStr = await AsyncStorage.getItem(COMMUNITY_UPLOADS_KEY);
-      if (!jsonStr) return [];
-      return JSON.parse(jsonStr) as PicsumImage[];
+      return this.safeJsonParse<PicsumImage[]>(jsonStr, []);
     } catch (error) {
       console.error('Error reading uploaded photos from storage:', error);
       return [];
